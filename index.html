@@ -97,7 +97,6 @@ html{scroll-behavior:smooth}
 .paybox{margin-top:8px;display:flex;flex-direction:column;gap:10px}
 .paybox .lbl2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
 #card-container{background:#fff;border-radius:12px;padding:4px 6px;min-height:56px}
-#apple-pay-button{height:48px;border-radius:12px;-apple-pay-button-style:white;-webkit-appearance:-apple-pay-button;cursor:pointer}
 .paysubmit{width:100%;margin-top:6px;border:0;cursor:pointer}
 .paysubmit[disabled]{opacity:.55;cursor:wait}
 .regmsg{margin:12px 0 0;font-size:15px;line-height:1.45;text-align:center;color:var(--muted)}
@@ -244,8 +243,7 @@ body,body[class]{background:#2a0609!important}
       <div class="field"><label for="f-city">Ciudad de donde viene</label><input id="f-city" name="ciudad" autocomplete="address-level2" required></div>
       <div class="paybox" id="paybox">
         <span class="lbl2">Pago</span>
-        <div id="apple-pay-button" hidden></div>
-        <div id="google-pay-button"></div>
+                <div id="google-pay-button"></div>
         <div id="cash-app-pay"></div>
         <div id="card-container"></div>
       </div>
@@ -325,7 +323,6 @@ async function sendPayment(token,d){
   catch(err){console.warn(name,err);msg(name+" no funcionó en este teléfono. Paga con tarjeta abajo.","err")}});
  const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
  if(!isIOS)try{const g=await payments.googlePay(req());await g.attach("#google-pay-button",{buttonColor:"white",buttonSizeMode:"fill"});wallet($("google-pay-button"),g,"Google Pay")}catch(e){console.warn("Google Pay",e);$("google-pay-button").hidden=true}
- try{const a=await payments.applePay(req());$("apple-pay-button").hidden=false;wallet($("apple-pay-button"),a,"Apple Pay")}catch(e){console.warn("Apple Pay",e)}
  try{const c=await payments.cashAppPay(req(),{redirectURL:location.href.split("#")[0],referenceId:"revival"});
   c.addEventListener("ontokenization",ev=>{const t=ev.detail.tokenResult;const d=formData();if(t.status==="OK"&&d)sendPayment(t.token,d)});
   await c.attach("#cash-app-pay",{shape:"semiround",width:"full"})}catch(e){}
