@@ -170,16 +170,20 @@ function doPost(e) {
     const body = JSON.parse(res.getContentText());
     const p = body.payment;
     if (!p || p.status !== 'COMPLETED') {
-      sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'FALLIDO', '', '', '']);
-      const code = body.errors && body.errors[0] && body.errors[0].code;
-      const msg = code === 'CARD_DECLINED' || code === 'GENERIC_DECLINE' ? 'Tu tarjeta fue rechazada. Prueba con otra.' : 'No se pudo completar el pago. Intenta de nuevo.';
-      return json_({ ok: false, error: msg });
+      const e0 = (body.errors && body.errors[0]) || {};
+      const code = e0.code || ('HTTP ' + res.getResponseCode());
+      const why = 'ERROR: ' + code + (e0.detail ? ' - ' + e0.detail : '') + (e0.field ? ' (' + e0.field + ')' : '');
+      sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'FALLIDO', why.slice(0, 300), '', '']);
+      const declined = ['CARD_DECLINED', 'GENERIC_DECLINE', 'INSUFFICIENT_FUNDS', 'CVV_FAILURE', 'ADDRESS_VERIFICATION_FAILURE', 'INVALID_EXPIRATION', 'CARD_EXPIRED'];
+      const msg = declined.indexOf(code) >= 0 ? 'Tu tarjeta fue rechazada. Prueba con otra.' : 'No se pudo completar el pago. Intenta de nuevo.';
+      return json_({ ok: false, error: msg + ' (' + code + ')' });
     }
     const code = newCode_();
     sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'COMPLETED', p.id, code, '']);
     try { sendTicket_(nombre, email, code); } catch (mailErr) {}
     return json_({ ok: true, count: paidCount_(), code: code });
   } catch (err) {
+    try { sheet_().appendRow([new Date(), '', '', '', '', '', 'ERROR SCRIPT', String(err).slice(0, 300), '', '']); } catch (e2) {}
     return json_({ ok: false, error: 'Ocurrió un error. Intenta de nuevo en un momento.' });
   } finally {
     lock.releaseLock();
