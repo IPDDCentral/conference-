@@ -5,6 +5,7 @@
  *   SQUARE_ACCESS_TOKEN  = your Square production access token (EAAA...)
  *   SQUARE_LOCATION_ID   = your Square location ID
  *   CHECKIN_PIN          = a PIN your door team types once on the scanner page
+ *   NTFY_TOPIC           = (optional) private ntfy.sh topic for phone push alerts
  */
 const CAP = 250;
 const PRICE_CENTS = 3000; // $30.00
@@ -141,6 +142,19 @@ function sendTicket_(nombre, email, code) {
   });
 }
 
+/** Alerts the organizer on every paid registration: email to the script owner + optional ntfy push. */
+function notifyOwner_(nombre, iglesia, ciudad, count) {
+  const title = 'Nueva inscripción (' + count + '/' + CAP + ')';
+  const text = nombre + ' · ' + iglesia + ' · ' + ciudad + '\nQuedan ' + (CAP - count) + ' cupos.';
+  const owner = Session.getEffectiveUser().getEmail();
+  if (owner) MailApp.sendEmail({ to: owner, subject: '✅ ' + title + ' – ' + nombre, body: text, name: 'Revival Inscripciones' });
+  const topic = PropertiesService.getScriptProperties().getProperty('NTFY_TOPIC');
+  if (topic) UrlFetchApp.fetch('https://ntfy.sh/' + encodeURIComponent(topic), {
+    method: 'post', payload: text, muteHttpExceptions: true,
+    headers: { Title: title, Tags: 'tada', Priority: 'high' }
+  });
+}
+
 function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
@@ -181,6 +195,7 @@ function doPost(e) {
     const code = newCode_();
     sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'COMPLETED', p.id, code, '']);
     try { sendTicket_(nombre, email, code); } catch (mailErr) {}
+    try { notifyOwner_(nombre, iglesia, ciudad, paidCount_()); } catch (nErr) {}
     return json_({ ok: true, count: paidCount_(), code: code });
   } catch (err) {
     try { sheet_().appendRow([new Date(), '', '', '', '', '', 'ERROR SCRIPT', String(err).slice(0, 300), '', '']); } catch (e2) {}
