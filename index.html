@@ -278,6 +278,7 @@ body,body[class]{background:#2a0609!important}
   <footer>© 2026 Iglesia Presencia de Dios · Transformados por su presencia</footer>
 </main>
 
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>{if(!/\/app$/.test(new URL(r.scope).pathname.replace(/\.html$/,"")))r.unregister()})).catch(()=>{});</script>
 <script src="https://web.squarecdn.com/v1/square.js"></script>
 <script>
 (function fitTitle(){const h=document.querySelector("h1.title"),sp=h&&h.querySelector("span");if(!sp)return;

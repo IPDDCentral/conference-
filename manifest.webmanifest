@@ -2,7 +2,7 @@
   "name": "Revival Staff · Iglesia Presencia de Dios",
   "short_name": "Revival Staff",
   "start_url": "app.html",
-  "scope": "./",
+  "scope": "./app",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1c0306",

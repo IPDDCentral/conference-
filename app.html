@@ -242,7 +242,7 @@ $("manual").addEventListener("keydown",e=>{if(e.key==="Enter")$("check").click()
 let lp;document.querySelector(".brand").addEventListener("pointerdown",()=>{lp=setTimeout(()=>{if(PIN&&confirm)logout()},1200)});
 ["pointerup","pointerleave"].forEach(ev=>document.querySelector(".brand").addEventListener(ev,()=>clearTimeout(lp)));
 
-if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./app"}).catch(()=>{});
 if(PIN)login();
 </script>
 </body>
