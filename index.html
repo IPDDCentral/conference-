@@ -125,6 +125,11 @@ body,body[class]{background:#1a0204!important}
 @media(min-width:561px){.card{background:rgba(14,2,4,.55)!important;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(255,120,110,.14)}}
 .blk,.reg{background:rgba(10,2,3,.55)!important;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 h1{text-shadow:0 2px 18px rgba(0,0,0,.55)}
+
+/* Church name level with the corner logos */
+.card>.church{position:absolute;top:14px;left:86px;right:86px;height:60px;margin:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(17px,2.4vw,22px);font-weight:900;letter-spacing:.08em;line-height:1.12;color:var(--fg);text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.card{padding-top:96px}
+@media(max-width:560px){.card>.church{top:12px;height:52px;left:calc(max(12px,env(safe-area-inset-left,0px)) + 58px);right:calc(max(12px,env(safe-area-inset-right,0px)) + 58px);font-size:clamp(14px,4.3vw,18px);letter-spacing:.05em}.card{padding-top:82px}}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
