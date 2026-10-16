@@ -156,6 +156,18 @@ h1.title small::after{background:linear-gradient(90deg,#ff8a2a,transparent)}
 h1.title span{font-size:clamp(78px,24vw,138px);letter-spacing:.01em;line-height:.9;background:linear-gradient(180deg,#fff1cf 0%,#ffc35a 28%,#ff7a1f 55%,#e8323c 82%,#b01422 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none!important;filter:drop-shadow(0 0 18px rgba(255,100,30,.45)) drop-shadow(0 6px 0 rgba(90,8,12,.55));animation:flare 3.2s ease-in-out infinite!important}
 h1.title em{font-style:normal;font-size:clamp(38px,11vw,62px);letter-spacing:.14em;padding-left:.14em;color:#fff;text-shadow:0 3px 20px rgba(0,0,0,.6)}
 @keyframes flare{0%,100%{filter:drop-shadow(0 0 14px rgba(255,100,30,.35)) drop-shadow(0 6px 0 rgba(90,8,12,.55))}50%{filter:drop-shadow(0 0 30px rgba(255,120,40,.75)) drop-shadow(0 6px 0 rgba(90,8,12,.55))}}
+
+/* Background matched to the fire headline */
+.stage{background:
+  radial-gradient(48% 26% at 50% 27%,rgba(255,195,90,.32),rgba(255,122,31,.12) 50%,transparent 75%),
+  radial-gradient(90% 50% at 50% 112%,#ffc35a 0%,#ff7a1f 16%,#e8323c 36%,rgba(176,20,34,.65) 54%,transparent 76%),
+  radial-gradient(55% 40% at 0% 55%,rgba(232,50,60,.4),transparent 70%),
+  radial-gradient(55% 40% at 100% 50%,rgba(255,122,31,.32),transparent 70%),
+  linear-gradient(180deg,#2c0609 0%,#170204 42%,#3a070b 100%)!important}
+.stage::before{background:
+   radial-gradient(26% 20% at 30% 40%,rgba(255,195,90,.38),transparent 70%),
+   radial-gradient(26% 20% at 70% 62%,rgba(232,50,60,.5),transparent 70%),
+   radial-gradient(24% 18% at 50% 80%,rgba(255,122,31,.5),transparent 70%)!important}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
