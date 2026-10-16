@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Copiar script</title>
+<style>
+:root{--bg:#2a0609;--fg:#f6e9df;--btn:#f6e9df;--btnfg:#4b0d12;--ok:#1f9d55;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,"Segoe UI",Roboto,sans-serif;padding-block:28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px;text-align:center}
+h1{margin:0;font-size:22px}
+p{margin:0;line-height:1.5;opacity:.85}
+button{font:800 18px inherit;padding:20px;border:0;border-radius:14px;background:var(--btn);color:var(--btnfg);cursor:pointer}
+button.ok{background:var(--ok);color:#fff}
+textarea{width:100%;height:160px;font:12px ui-monospace,monospace;background:#170204;color:var(--fg);border:1px solid #6a1a1d;border-radius:10px;padding:10px;box-sizing:border-box}
+#status{font-weight:700}
+</style>
+</head>
+<body>
+<main>
+  <h1>Copiar el script</h1>
+  <p>Toca el botón para copiar el script completo. Luego pégalo en Apps Script.</p>
+  <button id="copy" disabled>Cargando…</button>
+  <p id="status"></p>
+  <textarea id="code" readonly aria-label="Script"></textarea>
+</main>
+<script>
+const b=document.getElementById("copy"),t=document.getElementById("code"),st=document.getElementById("status");
+fetch("apps-script.gs?t="+Date.now()).then(r=>r.text()).then(code=>{
+  t.value=code;const lines=code.split("\n").length;
+  b.disabled=false;b.textContent="Copiar script ("+lines+" líneas)";
+  b.onclick=async()=>{
+    try{await navigator.clipboard.writeText(code);b.textContent="✓ Copiado";b.classList.add("ok");st.textContent="Ahora pégalo en Apps Script. Debe terminar en la línea "+lines+"."}
+    catch(e){t.focus();t.select();t.setSelectionRange(0,code.length);st.textContent="Toca el texto de abajo y elige Copiar."}
+  };
+}).catch(()=>{b.textContent="No se pudo cargar";st.textContent="Revisa tu internet y recarga la página."});
+</script>
+</body>
+</html>
