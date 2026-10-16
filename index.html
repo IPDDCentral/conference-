@@ -1,6 +1,6 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>The Revival Is Here</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800;900&display=swap">
 <style>
 /* Single centered invitation card on deep navy; gold accents */
 :root{--bg:#1a080b;--card:#0b0405;--fg:#f5efe2;--muted:#d8d2c6;--gold:#e8323c;--gold2:#b01422;--box:#1f0c0f;color-scheme:dark;
@@ -147,6 +147,15 @@ h1{text-shadow:0 2px 18px rgba(0,0,0,.55)}
 @keyframes drift{0%{transform:translate(-6%,-4%) rotate(0deg) scale(1)}50%{transform:translate(5%,3%) rotate(12deg) scale(1.08)}100%{transform:translate(-3%,6%) rotate(-8deg) scale(1)}}
 .stage::after{opacity:.12}
 .stage+.vignette{background:radial-gradient(120% 90% at 50% 45%,transparent 60%,rgba(0,0,0,.55) 100%)}
+
+/* Poster headline */
+h1.title{font-family:"Anton","Impact","Arial Narrow Bold",sans-serif;font-weight:400;text-transform:uppercase;line-height:.88;display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:30px;text-shadow:none}
+h1.title small{display:flex;align-items:center;gap:14px;font-size:clamp(18px,5vw,26px);letter-spacing:.55em;padding-left:.55em;color:#ffd9a8}
+h1.title small::before,h1.title small::after{content:"";width:clamp(36px,12vw,70px);height:2px;background:linear-gradient(90deg,transparent,#ff8a2a)}
+h1.title small::after{background:linear-gradient(90deg,#ff8a2a,transparent)}
+h1.title span{font-size:clamp(78px,24vw,138px);letter-spacing:.01em;line-height:.9;background:linear-gradient(180deg,#fff1cf 0%,#ffc35a 28%,#ff7a1f 55%,#e8323c 82%,#b01422 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none!important;filter:drop-shadow(0 0 18px rgba(255,100,30,.45)) drop-shadow(0 6px 0 rgba(90,8,12,.55));animation:flare 3.2s ease-in-out infinite!important}
+h1.title em{font-style:normal;font-size:clamp(38px,11vw,62px);letter-spacing:.14em;padding-left:.14em;color:#fff;text-shadow:0 3px 20px rgba(0,0,0,.6)}
+@keyframes flare{0%,100%{filter:drop-shadow(0 0 14px rgba(255,100,30,.35)) drop-shadow(0 6px 0 rgba(90,8,12,.55))}50%{filter:drop-shadow(0 0 30px rgba(255,120,40,.75)) drop-shadow(0 6px 0 rgba(90,8,12,.55))}}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
@@ -160,7 +169,7 @@ h1{text-shadow:0 2px 18px rgba(0,0,0,.55)}
     <div class="pastor"><img src="https://iglesiapresenciadedios.org/wp-content/uploads/2026/08/yanet.webp" alt="Profeta Yanet Romero"><span>Profeta</span><b>Yanet Romero</b></div>
   </div>
   <p class="pbio">Pastores fundadores de Iglesia Presencia de Dios desde hace 21 años, con iglesias en EE.UU. y Honduras.</p>
-  <h1>The<br><span>Revival</span><br>Is Here</h1>
+  <h1 class="title"><small>The</small><span>Revival</span><em>Is Here</em></h1>
   <p class="sub">Un tiempo de avivamiento para nuestra congregación</p>
   <div class="photo" id="photo" role="img" aria-label="Foto del predicador"></div>
   <div class="lbl first">Predicador invitado</div>
