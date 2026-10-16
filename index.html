@@ -205,7 +205,7 @@ async function sendPayment(token,d){
   else{msg(r.error||"No se pudo completar el pago. Intenta de nuevo.","err");$("paybtn").disabled=false}}
  catch(e){msg("No pudimos conectar. Revisa tu internet e intenta de nuevo.","err");$("paybtn").disabled=false}}
 (async function initPay(){
- if(!SQUARE_APP_ID||!SQUARE_LOCATION_ID||!SCRIPT_URL||!window.Square){$("paybox").hidden=true;$("paybtn").textContent="Inscripción en línea muy pronto";$("paybtn").disabled=true;$("altlink").hidden=false;$("altlink").innerHTML='Mientras tanto, inscríbete <a href="https://docs.google.com/forms/d/e/1FAIpQLSc-5CTjDsrCxWyd8JvTrOXSu6UjFuQ7fItN_q26Ok7R7mG76g/viewform" target="_blank" rel="noopener">aquí</a>.';return}
+ if(!SQUARE_APP_ID||!SQUARE_LOCATION_ID||!SCRIPT_URL||!window.Square){$("paybox").hidden=true;$("paybtn").textContent="Inscripción en línea muy pronto";$("paybtn").disabled=true;return}
  const payments=Square.payments(SQUARE_APP_ID,SQUARE_LOCATION_ID);
  const req=()=>payments.paymentRequest({countryCode:"US",currencyCode:"USD",total:{amount:PRICE,label:"Inscripción The Revival Is Here"}});
  const card=await payments.card();await card.attach("#card-container");
