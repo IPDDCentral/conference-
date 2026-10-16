@@ -297,7 +297,7 @@ function setSeats(used){const left=Math.max(0,CAP-used);$("left").textContent=le
  else if(left<=25)m.textContent="¡Solo quedan "+left+" cupos!";else m.textContent=used+" personas ya inscritas"}
 async function loadSeats(){if(!SCRIPT_URL)return;try{const r=await (await fetch(SCRIPT_URL+"?action=count&t="+Date.now())).json();if(typeof r.count==="number")setSeats(r.count)}catch(e){}}
 loadSeats();
-function msg(t,c){const m=$("regmsg");m.textContent=t;m.className="regmsg"+(c?" "+c:"")}
+function msg(t,c){const m=$("regmsg");m.textContent=t;m.className="regmsg"+(c?" "+c:"");if(c==="err")m.scrollIntoView({behavior:"smooth",block:"center"})}
 function formData(){const f=$("regform");const d={nombre:f.nombre.value.trim(),email:f.email.value.trim(),iglesia:f.iglesia.value.trim(),ciudad:f.ciudad.value.trim()};
  if(!d.nombre||!d.iglesia||!d.ciudad){msg("Por favor completa todos los campos.","err");return null}
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){msg("Revisa tu correo electrónico.","err");return null}return d}
@@ -314,9 +314,13 @@ async function sendPayment(token,d){
  const card=await payments.card();await card.attach("#card-container");
  $("regform").addEventListener("submit",async e=>{e.preventDefault();const d=formData();if(!d)return;
   const res=await card.tokenize();if(res.status==="OK")sendPayment(res.token,d);else msg("Revisa los datos de tu tarjeta.","err")});
- const wallet=(btn,fn)=>btn.addEventListener("click",async e=>{e.preventDefault();const d=formData();if(!d)return;try{const res=await fn.tokenize();if(res.status==="OK")sendPayment(res.token,d)}catch(err){}});
- try{const g=await payments.googlePay(req());await g.attach("#google-pay-button",{buttonColor:"white",buttonSizeMode:"fill"});wallet($("google-pay-button"),g)}catch(e){}
- try{const a=await payments.applePay(req());$("apple-pay-button").hidden=false;wallet($("apple-pay-button"),a)}catch(e){}
+ const wallet=(btn,fn,name)=>btn.addEventListener("click",async e=>{e.preventDefault();const d=formData();if(!d){$("regmsg").scrollIntoView({behavior:"smooth",block:"center"});return}
+  try{const res=await fn.tokenize();
+   if(res.status==="OK")sendPayment(res.token,d);
+   else if(res.status!=="Cancel"){const why=(res.errors&&res.errors[0]&&res.errors[0].message)||res.status;console.warn(name,res);msg(name+" no está disponible en este teléfono ("+why+"). Paga con tarjeta abajo.","err")}}
+  catch(err){console.warn(name,err);msg(name+" no funcionó en este teléfono. Paga con tarjeta abajo.","err")}});
+ try{const g=await payments.googlePay(req());await g.attach("#google-pay-button",{buttonColor:"white",buttonSizeMode:"fill"});wallet($("google-pay-button"),g,"Google Pay")}catch(e){console.warn("Google Pay",e);$("google-pay-button").hidden=true}
+ try{const a=await payments.applePay(req());$("apple-pay-button").hidden=false;wallet($("apple-pay-button"),a,"Apple Pay")}catch(e){console.warn("Apple Pay",e)}
  try{const c=await payments.cashAppPay(req(),{redirectURL:location.href.split("#")[0],referenceId:"revival"});
   c.addEventListener("ontokenization",ev=>{const t=ev.detail.tokenResult;const d=formData();if(t.status==="OK"&&d)sendPayment(t.token,d)});
   await c.attach("#cash-app-pay",{shape:"semiround",width:"full"})}catch(e){}
