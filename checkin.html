@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Check-in · The Revival Is Here</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#0b0405;--panel:#1f0c0f;--fg:#f5efe2;--muted:#cfc6bb;--red:#e8323c;--ok:#1f9d55;--warn:#d98e04;--bad:#c62828;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Inter,-apple-system,"Segoe UI",Roboto,sans-serif;padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{margin:0;font-size:22px;font-weight:800;text-align:center}
+h1 span{color:var(--red)}
+.sub{margin:0;text-align:center;color:var(--muted);font-size:14px}
+#reader{width:100%;border-radius:16px;overflow:hidden;background:#000;min-height:260px}
+.result{border-radius:16px;padding:22px 18px;text-align:center;background:var(--panel);min-height:130px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.result .big{font-size:28px;font-weight:800}
+.result .name{font-size:20px;font-weight:600}
+.result .meta{color:rgba(255,255,255,.85);font-size:15px}
+.result.valid{background:var(--ok)}.result.used{background:var(--warn)}.result.invalid,.result.unpaid,.result.pin{background:var(--bad)}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;font:16px Inter,sans-serif;color:var(--fg);background:var(--panel);border:1px solid #5a2027;border-radius:12px;padding:13px 14px;text-transform:uppercase}
+button{font:700 15px Inter,sans-serif;border:0;border-radius:12px;padding:13px 18px;background:var(--red);color:#fff;cursor:pointer}
+button.ghost{background:transparent;border:1px solid #5a2027;color:var(--muted)}
+.stats{text-align:center;color:var(--muted);font-size:14px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <h1>Check-in · <span>The Revival Is Here</span></h1>
+  <p class="sub">Escanea el código QR de la entrada</p>
+
+  <section id="pinbox">
+    <div class="row"><input id="pin" type="password" inputmode="numeric" placeholder="PIN del equipo" autocomplete="off"><button id="pinsave">Entrar</button></div>
+  </section>
+
+  <section id="app" hidden>
+    <div id="reader"></div>
+    <div class="result" id="result"><div class="big">Listo para escanear</div><div class="meta">Apunta la cámara al código</div></div>
+    <div class="row"><input id="manual" placeholder="O escribe el código (AV-...)"><button id="check">Verificar</button></div>
+    <div class="row"><button class="ghost" id="logout" style="flex:1">Cambiar PIN</button></div>
+    <p class="stats" id="stats"></p>
+  </section>
+</main>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+const SCRIPT_URL=""; // same Apps Script web app URL as the website
+const $=id=>document.getElementById(id);
+let PIN="";try{PIN=localStorage.getItem("checkin_pin")||""}catch(e){}
+let busy=false,last="",lastAt=0,scanned=0;
+function show(cls,big,name,meta){const r=$("result");r.className="result "+cls;r.innerHTML="";
+ [["big",big],["name",name],["meta",meta]].forEach(([c,t])=>{if(t){const d=document.createElement("div");d.className=c;d.textContent=t;r.appendChild(d)}});
+ if(navigator.vibrate)navigator.vibrate(cls==="valid"?120:[80,60,80])}
+async function verify(code){code=String(code||"").trim().toUpperCase();if(!code||busy)return;
+ if(code===last&&Date.now()-lastAt<4000)return;last=code;lastAt=Date.now();busy=true;show("","Verificando…",code,"");
+ try{const r=await (await fetch(SCRIPT_URL+"?action=checkin&code="+encodeURIComponent(code)+"&pin="+encodeURIComponent(PIN)+"&t="+Date.now())).json();
+  const where=[r.iglesia,r.ciudad].filter(Boolean).join(" · ");
+  if(r.status==="valid"){scanned++;show("valid","✓ Bienvenido",r.nombre,where);$("stats").textContent=scanned+" entradas verificadas en este teléfono"}
+  else if(r.status==="used")show("used","Ya entró",r.nombre,"Registrado a las "+r.at);
+  else if(r.status==="unpaid")show("unpaid","Pago no completado",r.nombre,"Enviar a la mesa de registro");
+  else if(r.status==="pin"){show("pin","PIN incorrecto","","Vuelve a escribir el PIN");logout()}
+  else show("invalid","✗ Código no válido",code,"No está en la lista de inscritos")}
+ catch(e){show("invalid","Sin conexión","","Revisa el internet e intenta de nuevo")}
+ busy=false}
+let scanner=null;
+function start(){$("pinbox").hidden=true;$("app").hidden=false;
+ if(!SCRIPT_URL){show("invalid","Falta configurar","","El enlace del sistema aún no está conectado");return}
+ if(!window.Html5Qrcode){show("invalid","No se pudo cargar el escáner","","Usa el código manual");return}
+ scanner=new Html5Qrcode("reader");
+ scanner.start({facingMode:"environment"},{fps:10,qrbox:{width:230,height:230}},t=>verify(t),()=>{})
+  .catch(()=>show("invalid","Sin acceso a la cámara","","Permite la cámara o escribe el código"))}
+function logout(){try{localStorage.removeItem("checkin_pin")}catch(e){}PIN="";if(scanner)scanner.stop().catch(()=>{});$("app").hidden=true;$("pinbox").hidden=false}
+$("pinsave").onclick=()=>{PIN=$("pin").value.trim();if(!PIN)return;try{localStorage.setItem("checkin_pin",PIN)}catch(e){}start()};
+$("pin").addEventListener("keydown",e=>{if(e.key==="Enter")$("pinsave").click()});
+$("check").onclick=()=>{verify($("manual").value);$("manual").value=""};
+$("manual").addEventListener("keydown",e=>{if(e.key==="Enter")$("check").click()});
+$("logout").onclick=logout;
+if(PIN)start();
+</script>
+</body>
+</html>

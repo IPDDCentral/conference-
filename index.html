@@ -201,7 +201,7 @@ function formData(){const f=$("regform");const d={nombre:f.nombre.value.trim(),e
 async function sendPayment(token,d){
  msg("Procesando tu pago…");$("paybtn").disabled=true;
  try{const r=await (await fetch(SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...d,token})})).json();
-  if(r.ok){$("regform").innerHTML='<div class="done"><h3>¡Inscripción confirmada!</h3><p>Gracias, '+d.nombre.replace(/[<>&"]/g,"")+'. Recibimos tu ofrenda de $30. Te enviamos el recibo a '+d.email.replace(/[<>&"]/g,"")+'.<br>Nos vemos el sábado 14 de noviembre.</p></div>';if(typeof r.count==="number")setSeats(r.count)}
+  if(r.ok){$("regform").innerHTML='<div class="done"><h3>¡Inscripción confirmada!</h3><p>Gracias, '+d.nombre.replace(/[<>&"]/g,"")+'. Recibimos tu ofrenda de $30. Te enviamos tu entrada con código QR a '+d.email.replace(/[<>&"]/g,"")+'. Muéstralo en la puerta.<br>Nos vemos el sábado 14 de noviembre.</p></div>';if(typeof r.count==="number")setSeats(r.count)}
   else{msg(r.error||"No se pudo completar el pago. Intenta de nuevo.","err");$("paybtn").disabled=false}}
  catch(e){msg("No pudimos conectar. Revisa tu internet e intenta de nuevo.","err");$("paybtn").disabled=false}}
 (async function initPay(){

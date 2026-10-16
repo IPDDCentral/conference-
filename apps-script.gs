@@ -4,11 +4,12 @@
  * Secrets go in Project Settings → Script properties (never in this file):
  *   SQUARE_ACCESS_TOKEN  = your Square production access token (EAAA...)
  *   SQUARE_LOCATION_ID   = your Square location ID
+ *   CHECKIN_PIN          = a PIN your door team types once on the scanner page
  */
 const CAP = 250;
 const PRICE_CENTS = 3000; // $30.00
 const SHEET_NAME = 'Inscripciones';
-const HEADERS = ['Fecha', 'Nombre y apellido', 'Correo electrónico', 'Iglesia', 'Ciudad', 'Monto', 'Estado del pago', 'ID de pago Square'];
+const HEADERS = ['Fecha', 'Nombre y apellido', 'Correo electrónico', 'Iglesia', 'Ciudad', 'Monto', 'Estado del pago', 'ID de pago Square', 'Código', 'Check-in'];
 
 function sheet_() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -33,8 +34,69 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-function doGet() {
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (p.action === 'checkin') return json_(checkin_(p));
   return json_({ count: paidCount_(), cap: CAP });
+}
+
+/** Door check-in: verifies a ticket code and marks it used. */
+function checkin_(p) {
+  const pin = PropertiesService.getScriptProperties().getProperty('CHECKIN_PIN');
+  if (!pin || String(p.pin || '') !== pin) return { ok: false, status: 'pin', error: 'PIN incorrecto' };
+  const code = String(p.code || '').trim().toUpperCase();
+  if (!code) return { ok: false, status: 'invalid' };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sh = sheet_();
+    const n = sh.getLastRow() - 1;
+    if (n <= 0) return { ok: false, status: 'invalid' };
+    const rows = sh.getRange(2, 1, n, 10).getValues();
+    for (let i = 0; i < rows.length; i++) {
+      if (String(rows[i][8]).toUpperCase() !== code) continue;
+      const r = rows[i];
+      const who = { nombre: r[1], iglesia: r[3], ciudad: r[4] };
+      if (r[6] !== 'COMPLETED') return Object.assign({ ok: false, status: 'unpaid' }, who);
+      if (r[9]) return Object.assign({ ok: false, status: 'used', at: Utilities.formatDate(new Date(r[9]), 'America/New_York', 'h:mm a') }, who);
+      sh.getRange(i + 2, 10).setValue(new Date());
+      return Object.assign({ ok: true, status: 'valid' }, who);
+    }
+    return { ok: false, status: 'invalid' };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function newCode_() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let c = 'AV-';
+  for (let i = 0; i < 8; i++) c += chars[Math.floor(Math.random() * chars.length)];
+  return c;
+}
+
+/** Emails the ticket with a QR code that the door team scans. */
+function sendTicket_(nombre, email, code) {
+  nombre = String(nombre).replace(/[<>&"]/g, '');
+  const qr = UrlFetchApp.fetch('https://quickchart.io/qr?size=400&margin=2&ecLevel=H&dark=8e0f19&text=' + encodeURIComponent(code)).getBlob().setName('entrada.png');
+  const html =
+    '<div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;text-align:center;color:#222">' +
+    '<h2 style="color:#8e0f19;margin-bottom:4px">The Revival Is Here</h2>' +
+    '<p style="margin-top:0">Iglesia Presencia de Dios</p>' +
+    '<p>Hola <b>' + nombre + '</b>, tu inscripción está confirmada y recibimos tu ofrenda de $30.</p>' +
+    '<p>Muestra este código en la entrada:</p>' +
+    '<img src="cid:qr" width="260" height="260" alt="Código QR de entrada">' +
+    '<p style="font-size:20px;letter-spacing:2px"><b>' + code + '</b></p>' +
+    '<p><b>Sábado 14 de noviembre</b><br>13505 Dulles Technology Dr., Suite #2A, Herndon, VA 20171</p>' +
+    '<p style="color:#666;font-size:13px">Predicador invitado: Josué Bernier · Almuerzo incluido</p></div>';
+  MailApp.sendEmail({
+    to: email,
+    subject: 'Tu entrada: The Revival Is Here · 14 de noviembre',
+    htmlBody: html,
+    inlineImages: { qr: qr },
+    attachments: [qr],
+    name: 'Iglesia Presencia de Dios'
+  });
 }
 
 function doPost(e) {
@@ -65,13 +127,15 @@ function doPost(e) {
     const body = JSON.parse(res.getContentText());
     const p = body.payment;
     if (!p || p.status !== 'COMPLETED') {
-      sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'FALLIDO', '']);
+      sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'FALLIDO', '', '', '']);
       const code = body.errors && body.errors[0] && body.errors[0].code;
       const msg = code === 'CARD_DECLINED' || code === 'GENERIC_DECLINE' ? 'Tu tarjeta fue rechazada. Prueba con otra.' : 'No se pudo completar el pago. Intenta de nuevo.';
       return json_({ ok: false, error: msg });
     }
-    sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'COMPLETED', p.id]);
-    return json_({ ok: true, count: paidCount_() });
+    const code = newCode_();
+    sheet_().appendRow([new Date(), nombre, email, iglesia, ciudad, 30, 'COMPLETED', p.id, code, '']);
+    try { sendTicket_(nombre, email, code); } catch (mailErr) {}
+    return json_({ ok: true, count: paidCount_(), code: code });
   } catch (err) {
     return json_({ ok: false, error: 'Ocurrió un error. Intenta de nuevo en un momento.' });
   } finally {
