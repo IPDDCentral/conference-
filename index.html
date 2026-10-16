@@ -1,10 +1,10 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>The Revival Is Here</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,300..900&family=UnifrakturMaguntia&family=Inter:wght@400;600;700;800;900&display=swap">
 <style>
 /* Single centered invitation card on deep navy; gold accents */
 :root{--bg:#1a080b;--card:#0b0405;--fg:#f5efe2;--muted:#d8d2c6;--gold:#e8323c;--gold2:#b01422;--box:#1f0c0f;color-scheme:dark;
---sans:"Inter",-apple-system,"Segoe UI",Roboto,sans-serif}
+--sans:"Archivo","Inter",-apple-system,"Segoe UI",Roboto,sans-serif}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);display:flex;justify-content:center;padding-block:48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .card{width:100%;max-width:480px;background:radial-gradient(ellipse at 50% 42%,#2e0f13 0%,transparent 55%),radial-gradient(ellipse at 20% 5%,#2a1114 0%,transparent 30%),linear-gradient(#160709,var(--card));padding:44px 24px 36px;text-align:center;display:flex;flex-direction:column;align-items:center}
 .card{position:relative}.logo{position:absolute;top:14px;left:14px;width:60px;height:60px;filter:drop-shadow(0 0 10px rgba(232,50,60,.3))}.logo.right{left:auto;right:14px}.church{margin-top:36px;display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.35em;color:var(--muted);text-transform:uppercase}
@@ -168,6 +168,33 @@ h1.title em{font-style:normal;font-size:clamp(38px,11vw,62px);letter-spacing:.14
    radial-gradient(26% 20% at 30% 40%,rgba(255,195,90,.38),transparent 70%),
    radial-gradient(26% 20% at 70% 62%,rgba(232,50,60,.5),transparent 70%),
    radial-gradient(24% 18% at 50% 80%,rgba(255,122,31,.5),transparent 70%)!important}
+
+/* ===== Flyer theme: fonts ===== */
+h1.title small{font-family:var(--sans);font-weight:300;letter-spacing:.5em}
+h1.title span{font-family:var(--sans);font-weight:900;font-stretch:125%;letter-spacing:-.04em;font-size:clamp(60px,18vw,108px);line-height:.8;display:flex;align-items:flex-end}
+h1.title span .bl{font-family:"UnifrakturMaguntia","Old English Text MT",serif;font-weight:400;font-size:1.62em;line-height:.78;letter-spacing:0;margin-right:-.02em;background:inherit;-webkit-background-clip:text;background-clip:text;color:transparent}
+h1.title em{font-family:"UnifrakturMaguntia","Old English Text MT",serif;text-transform:none;letter-spacing:0;padding-left:0;font-size:clamp(52px,15vw,88px);line-height:.95;color:#f6e9df}
+.pastor span,.lbl,.blk h2,.reg .field label{font-family:var(--sans)}
+.date,.name,.pastor b{font-stretch:110%}
+
+/* ===== Flyer theme: blurred lens-light background in motion ===== */
+.stage{filter:blur(34px);inset:-12%!important;background:
+  radial-gradient(36% 28% at 50% 30%,#f7dccd 0%,#ea9a85 38%,transparent 72%),
+  radial-gradient(circle at 50% 42%,transparent 30%,rgba(60,6,10,.85) 46%,rgba(120,24,26,.6) 56%,transparent 72%),
+  radial-gradient(40% 35% at 8% 62%,rgba(150,210,215,.28),transparent 70%),
+  radial-gradient(45% 40% at 95% 30%,rgba(255,150,90,.45),transparent 70%),
+  radial-gradient(70% 45% at 50% 105%,#e46a54 0%,#a3262a 40%,transparent 75%),
+  linear-gradient(180deg,#6a1a1d 0%,#8c2a2a 35%,#5c1317 70%,#3a080c 100%)!important;
+  animation:lens 16s ease-in-out infinite alternate}
+@keyframes lens{0%{transform:scale(1) rotate(0deg) translate(0,0)}50%{transform:scale(1.07) rotate(4deg) translate(1.5%,-1%)}100%{transform:scale(1.03) rotate(-3deg) translate(-1.5%,1%)}}
+.stage::before{background:
+   radial-gradient(24% 18% at 28% 38%,rgba(247,220,205,.35),transparent 70%),
+   radial-gradient(26% 20% at 72% 58%,rgba(228,106,84,.45),transparent 70%),
+   radial-gradient(22% 16% at 40% 80%,rgba(150,210,215,.18),transparent 70%)!important}
+.stage::after{opacity:.2}
+body,body[class]{background:#4b0d12!important}
+.stage+.vignette{background:radial-gradient(120% 90% at 50% 45%,transparent 60%,rgba(42,6,9,.6) 100%)}
+.pastor span,.lbl,.unit small,.seats small,.blk h2,.reg .field label,.paybox .lbl2{color:#fbd6c6!important}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
@@ -181,7 +208,7 @@ h1.title em{font-style:normal;font-size:clamp(38px,11vw,62px);letter-spacing:.14
     <div class="pastor"><img src="https://iglesiapresenciadedios.org/wp-content/uploads/2026/08/yanet.webp" alt="Profeta Yanet Romero"><span>Profeta</span><b>Yanet Romero</b></div>
   </div>
   <p class="pbio">Pastores fundadores de Iglesia Presencia de Dios desde hace 21 años, con iglesias en EE.UU. y Honduras.</p>
-  <h1 class="title"><small>The</small><span>Revival</span><em>Is Here</em></h1>
+  <h1 class="title" aria-label="The Revival Is Here"><small>The</small><span><b class="bl">R</b>EVIVAL</span><em>is here</em></h1>
   <p class="sub">Un tiempo de avivamiento para nuestra congregación</p>
   <div class="photo" id="photo" role="img" aria-label="Foto del predicador"></div>
   <div class="lbl first">Predicador invitado</div>
