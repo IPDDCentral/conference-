@@ -163,6 +163,7 @@ function doPost(e) {
         amount_money: { amount: PRICE_CENTS, currency: 'USD' },
         location_id: props.getProperty('SQUARE_LOCATION_ID'),
         buyer_email_address: email,
+        verification_token: d.verificationToken || undefined,
         note: 'The Revival Is Here - ' + nombre
       })
     });
