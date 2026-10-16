@@ -195,6 +195,9 @@ h1.title em{font-family:"UnifrakturMaguntia","Old English Text MT",serif;text-tr
 body,body[class]{background:#4b0d12!important}
 .stage+.vignette{background:radial-gradient(120% 90% at 50% 45%,transparent 60%,rgba(42,6,9,.6) 100%)}
 .pastor span,.lbl,.unit small,.seats small,.blk h2,.reg .field label,.paybox .lbl2{color:#fbd6c6!important}
+h1.title{width:100%;max-width:100%}
+h1.title span{font-size:clamp(40px,12.5vw,72px)!important;white-space:nowrap;justify-content:center}
+h1.title em{font-size:clamp(44px,13vw,80px)!important}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
@@ -274,6 +277,11 @@ body,body[class]{background:#4b0d12!important}
 
 <script src="https://web.squarecdn.com/v1/square.js"></script>
 <script>
+(function fitTitle(){const h=document.querySelector("h1.title"),sp=h&&h.querySelector("span");if(!sp)return;
+ const fit=()=>{sp.style.fontSize="";let f=parseFloat(getComputedStyle(sp).fontSize);const max=h.clientWidth;
+  while(sp.scrollWidth>max&&f>24){f-=1;sp.style.setProperty("font-size",f+"px","important")}};
+ fit();addEventListener("resize",fit);if(document.fonts)document.fonts.ready.then(fit)})();
+
 /* ===== Registration + payment settings ===== */
 const SQUARE_APP_ID="sq0idp-BzZWhzBifM9-yvj96DrsBQ";        // Square Application ID (sq0idp-...)
 const SQUARE_LOCATION_ID="LHEHX8AHCMZ92";   // Square Location ID
