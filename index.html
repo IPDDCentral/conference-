@@ -38,6 +38,19 @@ body{padding:0;background:var(--card)}
 h1{margin-top:28px}.photo{margin-top:28px;width:140px;height:140px}.day{margin-top:32px}.count{margin-top:28px}}
 @media(max-width:380px){.count{gap:8px}.num{width:56px;font-size:24px}.date{font-size:27px}.church{font-size:11px;letter-spacing:.2em}}
 @media(min-width:900px){body{padding-block:40px}.card{max-width:520px;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.45)}}
+.info{width:100%;max-width:420px;margin-top:48px;display:flex;flex-direction:column;gap:14px;text-align:left}
+.blk{background:rgba(255,255,255,.035);border:1px solid #2a2a22;border-radius:16px;padding:18px 18px}
+.blk h2{margin:0 0 8px;font-size:12px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;font-weight:600}
+.blk p{margin:0;font-size:16px;line-height:1.5;color:var(--muted)}
+.blk p b{color:var(--fg);font-weight:700}
+.blk a{color:var(--gold);text-decoration:none;font-weight:600}
+.blk a:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.times{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:16px;color:var(--muted)}
+.times b{color:var(--fg)}
+.social{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.social a{border:1px solid #6b5a1e;border-radius:30px;padding:8px 16px;font-size:14px}
+.give{display:block;text-align:center;margin-top:12px;padding:14px;border-radius:40px;border:2px solid var(--gold);letter-spacing:.08em;text-transform:uppercase;font-size:15px}
+footer{margin-top:36px;font-size:13px;color:#8d8778;line-height:1.5}
 </style>
 
 <main class="card">
@@ -58,6 +71,46 @@ h1{margin-top:28px}.photo{margin-top:28px;width:140px;height:140px}.day{margin-t
     <div class="unit"><div class="num" id="s">00</div><small>SEG</small></div>
   </div>
   <a class="btn primary" href="https://docs.google.com/forms/d/e/1FAIpQLSc-5CTjDsrCxWyd8JvTrOXSu6UjFuQ7fItN_q26Ok7R7mG76g/viewform" target="_blank" rel="noopener">Inscríbete ahora</a>
+
+  <section class="info">
+    <div class="blk">
+      <h2>Lugar</h2>
+      <p><b>Iglesia Presencia de Dios · Sede Central</b><br>13505 Dulles Technology Dr., Suite #2A<br>Herndon, VA 20171</p>
+      <p style="margin-top:10px"><a href="https://www.google.com/maps/search/?api=1&query=13505+Dulles+Technology+Dr+Suite+2A+Herndon+VA+20171" target="_blank" rel="noopener">Cómo llegar →</a></p>
+    </div>
+    <div class="blk">
+      <h2>Contacto</h2>
+      <p><a href="tel:+17037725795">(703) 772-5795</a><br><a href="mailto:iglesiapresenciad@gmail.com">iglesiapresenciad@gmail.com</a></p>
+    </div>
+    <div class="blk">
+      <h2>Pastores</h2>
+      <p><b>Apóstol Élmer Romero y Profeta Yanet Romero</b><br>Jóvenes Generación Sedienta: Pastores Wilber y Yesika Gaitán</p>
+    </div>
+    <div class="blk">
+      <h2>Servicios semanales</h2>
+      <div class="times"><b>Martes</b><span>7:30 PM</span><b>Viernes</b><span>7:30 PM</span><b>Domingo</b><span>11:00 AM y 4:00 PM</span></div>
+    </div>
+    <div class="blk">
+      <h2>¿No puedes venir?</h2>
+      <p>Míralo en vivo en <a href="https://iglesiapresenciadedios.online.church/" target="_blank" rel="noopener">nuestra transmisión</a> o en <a href="https://www.youtube.com/@IglesiaPresenciaDeDiosSterling" target="_blank" rel="noopener">YouTube</a>.</p>
+    </div>
+    <div class="blk">
+      <h2>Diezmos y ofrendas</h2>
+      <p>Siembra en este avivamiento de forma segura en línea.</p>
+      <a class="give" href="https://checkout.square.site/merchant/MLP4DKHC1661P/checkout/PGWJDF7TFTAFDZ2X4KS33TPJ" target="_blank" rel="noopener">Dar ofrenda</a>
+    </div>
+    <div class="blk">
+      <h2>Síguenos</h2>
+      <div class="social">
+        <a href="https://www.facebook.com/Ipddpastores" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.instagram.com/ipddioscentral/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.youtube.com/@IglesiaPresenciaDeDiosSterling" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://www.tiktok.com/@ipddios" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://iglesiapresenciadedios.org" target="_blank" rel="noopener">Sitio web</a>
+      </div>
+    </div>
+  </section>
+  <footer>© 2026 Iglesia Presencia de Dios · Transformados por su presencia</footer>
 </main>
 
 <script>
