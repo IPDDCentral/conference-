@@ -130,6 +130,23 @@ h1{text-shadow:0 2px 18px rgba(0,0,0,.55)}
 .card>.church{position:absolute;top:14px;left:86px;right:86px;height:60px;margin:0;display:flex;align-items:center;justify-content:center;text-align:center;font-size:clamp(17px,2.4vw,22px);font-weight:900;letter-spacing:.08em;line-height:1.12;color:var(--fg);text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.6)}
 .card{padding-top:96px}
 @media(max-width:560px){.card>.church{top:12px;height:52px;left:calc(max(12px,env(safe-area-inset-left,0px)) + 58px);right:calc(max(12px,env(safe-area-inset-right,0px)) + 58px);font-size:clamp(14px,4.3vw,18px);letter-spacing:.05em}.card{padding-top:82px}}
+
+/* Youth aurora background */
+.stage{background:
+  radial-gradient(55% 40% at 15% 20%,rgba(123,47,247,.55),transparent 70%),
+  radial-gradient(50% 38% at 88% 30%,rgba(255,45,85,.55),transparent 70%),
+  radial-gradient(70% 45% at 50% 105%,rgba(255,106,26,.75),rgba(232,20,40,.45) 40%,transparent 72%),
+  radial-gradient(45% 35% at 80% 85%,rgba(30,60,255,.35),transparent 70%),
+  linear-gradient(160deg,#16041a 0%,#0e0310 50%,#1a0408 100%)}
+.stage::before{left:-25%;top:-25%;width:150%;height:150%;transform:none;-webkit-mask-image:none;mask-image:none;
+  background:
+   radial-gradient(28% 22% at 30% 35%,rgba(255,45,85,.55),transparent 70%),
+   radial-gradient(26% 20% at 70% 60%,rgba(123,47,247,.5),transparent 70%),
+   radial-gradient(24% 18% at 45% 75%,rgba(255,140,40,.45),transparent 70%);
+  filter:blur(30px);animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate(-6%,-4%) rotate(0deg) scale(1)}50%{transform:translate(5%,3%) rotate(12deg) scale(1.08)}100%{transform:translate(-3%,6%) rotate(-8deg) scale(1)}}
+.stage::after{opacity:.12}
+.stage+.vignette{background:radial-gradient(120% 90% at 50% 45%,transparent 60%,rgba(0,0,0,.55) 100%)}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
