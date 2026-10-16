@@ -47,7 +47,7 @@ button.ghost{background:transparent;border:1px solid #5a2027;color:var(--muted)}
 </main>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
-const SCRIPT_URL=""; // same Apps Script web app URL as the website
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbx97wbbCjPk7kWxU94UBzxF_htBFw_Rob47lZL0j2wwc9n1-CpRcvms2l-I7zHp5lqk/exec"; // same Apps Script web app URL as the website
 const $=id=>document.getElementById(id);
 let PIN="";try{PIN=localStorage.getItem("checkin_pin")||""}catch(e){}
 let busy=false,last="",lastAt=0,scanned=0;
