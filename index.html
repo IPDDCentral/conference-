@@ -27,7 +27,17 @@ h1 span{color:var(--gold);text-shadow:0 0 24px rgba(242,195,24,.45)}
 .primary{background:linear-gradient(var(--gold),var(--gold2));color:#1a1405;box-shadow:0 10px 30px rgba(242,195,24,.2)}
 .secondary{margin-top:24px;max-width:420px;border:2px solid var(--gold);color:var(--gold);background:none}
 .btn:focus-visible,.upload:focus-within{outline:2px solid var(--fg);outline-offset:3px}
-@media(max-width:400px){.count{gap:10px}.num{width:58px}}
+html,body{min-height:100%}
+.card{min-height:calc(100dvh - 96px);justify-content:center}
+.btn{margin-top:36px}
+@media(max-width:560px){
+body{padding:0;background:var(--card)}
+.card{max-width:none;min-height:100dvh;padding-block:24px 32px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.logo{width:52px;height:52px;top:12px}.logo:not(.right){left:max(12px,env(safe-area-inset-left,0px))}.logo.right{right:max(12px,env(safe-area-inset-right,0px))}
+.church{margin-top:60px;font-size:12px;letter-spacing:.25em}
+h1{margin-top:28px}.photo{margin-top:28px;width:140px;height:140px}.day{margin-top:32px}.count{margin-top:28px}}
+@media(max-width:380px){.count{gap:8px}.num{width:56px;font-size:24px}.date{font-size:27px}.church{font-size:11px;letter-spacing:.2em}}
+@media(min-width:900px){body{padding-block:40px}.card{max-width:520px;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.45)}}
 </style>
 
 <main class="card">
