@@ -321,8 +321,7 @@ async function sendPayment(token,d){
    if(res.status==="OK")sendPayment(res.token,d);
    else if(res.status!=="Cancel"){const why=(res.errors&&res.errors[0]&&res.errors[0].message)||res.status;console.warn(name,res);msg(name+" no está disponible en este teléfono ("+why+"). Paga con tarjeta abajo.","err")}}
   catch(err){console.warn(name,err);msg(name+" no funcionó en este teléfono. Paga con tarjeta abajo.","err")}});
- const isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
- if(!isIOS)try{const g=await payments.googlePay(req());await g.attach("#google-pay-button",{buttonColor:"white",buttonSizeMode:"fill"});wallet($("google-pay-button"),g,"Google Pay")}catch(e){console.warn("Google Pay",e);$("google-pay-button").hidden=true}
+ try{const g=await payments.googlePay(req());await g.attach("#google-pay-button",{buttonColor:"white",buttonSizeMode:"fill"});wallet($("google-pay-button"),g,"Google Pay")}catch(e){console.warn("Google Pay",e);$("google-pay-button").hidden=true}
  try{const c=await payments.cashAppPay(req(),{redirectURL:location.href.split("#")[0],referenceId:"revival"});
   c.addEventListener("ontokenization",ev=>{const t=ev.detail.tokenResult;const d=formData();if(t.status==="OK"&&d)sendPayment(t.token,d)});
   await c.attach("#cash-app-pay",{shape:"semiround",width:"full"})}catch(e){}
