@@ -37,7 +37,49 @@ function json_(obj) {
 function doGet(e) {
   const p = (e && e.parameter) || {};
   if (p.action === 'checkin') return json_(checkin_(p));
+  if (p.action === 'list') return json_(list_(p));
+  if (p.action === 'undo') return json_(undo_(p));
   return json_({ count: paidCount_(), cap: CAP });
+}
+
+function pinOk_(p) {
+  const pin = PropertiesService.getScriptProperties().getProperty('CHECKIN_PIN');
+  return !!pin && String(p.pin || '') === pin;
+}
+
+/** Staff app: every registration with its check-in status. */
+function list_(p) {
+  if (!pinOk_(p)) return { ok: false, status: 'pin' };
+  const sh = sheet_();
+  const n = sh.getLastRow() - 1;
+  if (n <= 0) return { ok: true, rows: [], cap: CAP };
+  const tz = 'America/New_York';
+  const fmt = (v, f) => (v ? Utilities.formatDate(new Date(v), tz, f) : '');
+  const rows = sh.getRange(2, 1, n, 10).getValues().map(r => ({
+    fecha: fmt(r[0], 'MMM d, h:mm a'), nombre: r[1], email: r[2], iglesia: r[3], ciudad: r[4],
+    monto: r[5], estado: r[6], codigo: r[8], checkin: fmt(r[9], 'h:mm a')
+  }));
+  return { ok: true, rows: rows, cap: CAP };
+}
+
+/** Staff app: undo a check-in made by mistake. */
+function undo_(p) {
+  if (!pinOk_(p)) return { ok: false, status: 'pin' };
+  const code = String(p.code || '').trim().toUpperCase();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sh = sheet_();
+    const n = sh.getLastRow() - 1;
+    if (n <= 0) return { ok: false };
+    const codes = sh.getRange(2, 9, n, 1).getValues();
+    for (let i = 0; i < codes.length; i++) {
+      if (String(codes[i][0]).toUpperCase() === code) { sh.getRange(i + 2, 10).setValue(''); return { ok: true }; }
+    }
+    return { ok: false };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 /** Door check-in: verifies a ticket code and marks it used. */

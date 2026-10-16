@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2a0609">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Revival Staff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="img/app-icon-180.png">
+<link rel="icon" href="img/app-icon-192.png">
+<title>Revival Staff</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=UnifrakturMaguntia&display=swap">
+<style>
+:root{--bg:#1c0306;--panel:#2e080c;--line:#4e161b;--fg:#f6e9df;--muted:#d6b9ad;--cream:#f6e9df;--maroon:#4b0d12;
+  --ok:#1f9d55;--warn:#d98e04;--bad:#c62828;--sans:"Archivo",-apple-system,"Segoe UI",Roboto,sans-serif;--bl:"UnifrakturMaguntia",serif;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);display:flex;flex-direction:column;overflow:hidden}
+header{padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(180deg,#3d090e,var(--bg))}
+.brand{font-weight:900;font-stretch:120%;font-size:20px;letter-spacing:-.02em}
+.brand b{font-family:var(--bl);font-weight:400;font-size:28px}
+.brand small{display:block;font-weight:600;font-stretch:100%;font-size:11px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.iconbtn{background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:8px 10px;font:600 13px var(--sans)}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);background:#160205;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{background:none;border:0;color:var(--muted);font:700 12px var(--sans);letter-spacing:.06em;padding:10px 0 12px;display:flex;flex-direction:column;align-items:center;gap:4px}
+nav button svg{width:24px;height:24px}
+nav button[aria-selected="true"]{color:var(--cream)}
+.view[hidden]{display:none!important}
+[hidden]{display:none!important}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat .n{font-weight:900;font-stretch:115%;font-size:30px;font-variant-numeric:tabular-nums;line-height:1}
+.stat .l{margin-top:6px;font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.bar{height:8px;border-radius:8px;background:#160205;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--cream);width:0;transition:width .6s}
+.meta{margin-top:8px;font-size:12px;color:var(--muted);text-align:right}
+
+/* Scanner */
+#reader{width:100%;border-radius:16px;overflow:hidden;background:#000;aspect-ratio:1/1;max-height:52vh;margin-top:8px}
+#reader video{object-fit:cover}
+.result{margin-top:12px;border-radius:16px;padding:18px;text-align:center;background:var(--panel);border:1px solid var(--line);min-height:112px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.result .big{font-weight:900;font-stretch:115%;font-size:26px}
+.result .name{font-weight:700;font-size:19px}
+.result .sub{font-size:14px;opacity:.9}
+.result.valid{background:var(--ok);border-color:var(--ok)}.result.used{background:var(--warn);border-color:var(--warn)}.result.bad{background:var(--bad);border-color:var(--bad)}
+.row{display:flex;gap:8px;margin-top:12px}
+input{flex:1;min-width:0;font:16px var(--sans);color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+input:focus{outline:none;border-color:var(--cream)}
+.btn{font:800 15px var(--sans);border:0;border-radius:12px;padding:13px 16px;background:var(--cream);color:var(--maroon)}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+
+/* List */
+.chips{display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:2px}
+.chip{flex:none;font:700 13px var(--sans);padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--cream);color:var(--maroon);border-color:var(--cream)}
+.list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.person{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.person .who{flex:1;min-width:0}
+.person .nm{font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .info{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{flex:none;font:800 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:6px 10px}
+.pill.in{background:var(--ok);color:#fff}.pill.wait{background:#160205;color:var(--muted);border:1px solid var(--line)}.pill.unpaid{background:var(--bad);color:#fff}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;line-height:1.5}
+
+/* Sheet */
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;z-index:10}
+.sheet .card{width:100%;background:#24050a;border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:20px max(18px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 20px) max(18px,env(safe-area-inset-left,0px))}
+.sheet h3{margin:0;font-size:22px;font-weight:900}
+.sheet dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px}
+.sheet dt{color:var(--muted)}.sheet dd{margin:0;word-break:break-word}
+.sheet .actions{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+
+/* Login */
+.login{max-width:360px;margin:12vh auto 0;text-align:center}
+.login h1{margin:0;font-weight:900;font-stretch:125%;font-size:40px;letter-spacing:-.04em;line-height:.9}
+.login h1 b{font-family:var(--bl);font-weight:400;font-size:62px}
+.login p{color:var(--muted);margin:10px 0 22px}
+.login .msg{color:#ff9a9a;min-height:20px;margin-top:10px;font-size:14px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><b>R</b>EVIVAL <small>Equipo de entrada</small></div>
+  <button class="iconbtn" id="refresh" hidden>Actualizar</button>
+</header>
+
+<main>
+  <!-- Login -->
+  <section id="login" class="login">
+    <h1><b>R</b>EVIVAL</h1>
+    <p>Escribe el PIN del equipo para entrar</p>
+    <div class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><button class="btn" id="enter">Entrar</button></div>
+    <div class="msg" id="loginmsg"></div>
+  </section>
+
+  <!-- Resumen -->
+  <section class="view" id="v-home" hidden>
+    <div class="stats">
+      <div class="stat"><div class="n" id="s-paid">0</div><div class="l">Inscritos pagados</div></div>
+      <div class="stat"><div class="n" id="s-in">0</div><div class="l">Ya llegaron</div></div>
+      <div class="stat"><div class="n" id="s-wait">0</div><div class="l">Faltan por llegar</div></div>
+      <div class="stat"><div class="n" id="s-left">250</div><div class="l">Cupos disponibles</div></div>
+      <div class="stat" style="grid-column:1/-1"><div class="n" id="s-money">$0</div><div class="l">Ofrendas recibidas en línea</div>
+        <div class="bar"><i id="s-bar"></i></div><div class="meta" id="s-pct">0 de 250 cupos llenos</div></div>
+    </div>
+    <p class="meta" id="updated" style="text-align:center;margin-top:14px"></p>
+  </section>
+
+  <!-- Escanear -->
+  <section class="view" id="v-scan" hidden>
+    <div id="reader"></div>
+    <div class="result" id="result"><div class="big">Listo para escanear</div><div class="sub">Apunta la cámara al código QR de la entrada</div></div>
+    <div class="row"><input id="manual" autocapitalize="characters" placeholder="O escribe el código (AV-…)"><button class="btn" id="check">Verificar</button></div>
+  </section>
+
+  <!-- Lista -->
+  <section class="view" id="v-list" hidden>
+    <div class="row" style="margin-top:8px"><input id="q" type="search" placeholder="Buscar nombre, iglesia, ciudad o código"></div>
+    <div class="chips" role="group" aria-label="Filtro">
+      <button class="chip" data-f="all" aria-pressed="true">Todos</button>
+      <button class="chip" data-f="wait" aria-pressed="false">Por llegar</button>
+      <button class="chip" data-f="in" aria-pressed="false">Llegaron</button>
+      <button class="chip" data-f="unpaid" aria-pressed="false">Pago fallido</button>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+</main>
+
+<nav id="tabs" hidden>
+  <button data-v="home" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Resumen</button>
+  <button data-v="scan" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7V3h4M17 3h4v4M21 17v4h-4M7 21H3v-4M7 12h10"/></svg>Escanear</button>
+  <button data-v="list" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Inscritos</button>
+</nav>
+
+<div class="sheet" id="sheet" hidden><div class="card" id="sheetcard"></div></div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbx97wbbCjPk7kWxU94UBzxF_htBFw_Rob47lZL0j2wwc9n1-CpRcvms2l-I7zHp5lqk/exec";
+const PRICE=30;
+const $=id=>document.getElementById(id);
+let PIN="",rows=[],cap=250,filter="all",scanner=null,busy=false,last="",lastAt=0;
+try{PIN=localStorage.getItem("staff_pin")||""}catch(e){}
+
+async function api(params){const u=new URL(SCRIPT_URL);Object.entries({...params,pin:PIN,t:Date.now()}).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u);return r.json()}
+
+/* ---------- login ---------- */
+async function login(){PIN=$("pin").value.trim()||PIN;if(!PIN)return;$("loginmsg").textContent="Entrando…";
+  try{const r=await api({action:"list"});if(r.status==="pin"){$("loginmsg").textContent="PIN incorrecto";PIN="";return}
+    try{localStorage.setItem("staff_pin",PIN)}catch(e){}
+    rows=r.rows||[];cap=r.cap||250;$("login").hidden=true;$("tabs").hidden=false;$("refresh").hidden=false;show("home");render()}
+  catch(e){$("loginmsg").textContent="Sin conexión. Revisa el internet."}}
+$("enter").onclick=login;$("pin").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+function logout(){try{localStorage.removeItem("staff_pin")}catch(e){}PIN="";stopScan();$("login").hidden=false;$("tabs").hidden=true;$("refresh").hidden=true;document.querySelectorAll(".view").forEach(v=>v.hidden=true)}
+
+/* ---------- tabs ---------- */
+function show(v){document.querySelectorAll(".view").forEach(x=>x.hidden=x.id!=="v-"+v);
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
+  if(v==="scan")startScan();else stopScan();if(v!=="scan")refresh()}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+
+/* ---------- data ---------- */
+async function refresh(){if(!PIN)return;try{const r=await api({action:"list"});if(r.status==="pin")return logout();rows=r.rows||[];cap=r.cap||250;render()}catch(e){}}
+$("refresh").onclick=refresh;
+setInterval(()=>{if(!document.hidden&&PIN&&$("v-scan").hidden)refresh()},20000);
+
+function render(){
+  const paid=rows.filter(r=>r.estado==="COMPLETED"),inn=paid.filter(r=>r.checkin);
+  $("s-paid").textContent=paid.length;$("s-in").textContent=inn.length;$("s-wait").textContent=paid.length-inn.length;
+  $("s-left").textContent=Math.max(0,cap-paid.length);$("s-money").textContent="$"+(paid.length*PRICE).toLocaleString("en-US");
+  $("s-bar").style.width=Math.min(100,paid.length/cap*100)+"%";$("s-pct").textContent=paid.length+" de "+cap+" cupos llenos";
+  $("updated").textContent="Actualizado "+new Date().toLocaleTimeString("es-US",{hour:"numeric",minute:"2-digit"});
+  renderList()}
+
+function renderList(){const q=$("q").value.trim().toLowerCase(),el=$("list");el.innerHTML="";
+  let list=rows.slice().reverse().filter(r=>{
+    if(filter==="in"&&!(r.estado==="COMPLETED"&&r.checkin))return false;
+    if(filter==="wait"&&!(r.estado==="COMPLETED"&&!r.checkin))return false;
+    if(filter==="unpaid"&&r.estado==="COMPLETED")return false;
+    if(filter==="all"&&r.estado!=="COMPLETED")return false;
+    return !q||[r.nombre,r.iglesia,r.ciudad,r.codigo,r.email].join(" ").toLowerCase().includes(q)});
+  if(!list.length){const d=document.createElement("div");d.className="empty";d.textContent=rows.length?"Nadie coincide con la búsqueda.":"Todavía no hay inscripciones. Aparecerán aquí en cuanto alguien pague en la página.";el.appendChild(d);return}
+  list.forEach(r=>{const b=document.createElement("button");b.className="person";b.style.cssText="text-align:left;color:inherit;font:inherit;width:100%";
+    const w=document.createElement("div");w.className="who";
+    const n=document.createElement("div");n.className="nm";n.textContent=r.nombre;
+    const i=document.createElement("div");i.className="info";i.textContent=[r.iglesia,r.ciudad].filter(Boolean).join(" · ");
+    w.append(n,i);const p=document.createElement("span");
+    if(r.estado!=="COMPLETED"){p.className="pill unpaid";p.textContent="Pago fallido"}
+    else if(r.checkin){p.className="pill in";p.textContent="✓ "+r.checkin}
+    else{p.className="pill wait";p.textContent="Por llegar"}
+    b.append(w,p);b.onclick=()=>openPerson(r);el.appendChild(b)})}
+$("q").addEventListener("input",renderList);
+document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{filter=c.dataset.f;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c));renderList()});
+
+/* ---------- person sheet ---------- */
+function openPerson(r){const c=$("sheetcard");c.innerHTML="";
+  const h=document.createElement("h3");h.textContent=r.nombre;c.appendChild(h);
+  const dl=document.createElement("dl");[["Iglesia",r.iglesia],["Ciudad",r.ciudad],["Correo",r.email],["Código",r.codigo||"—"],["Inscrito",r.fecha],["Pago",r.estado==="COMPLETED"?"$"+r.monto+" pagado":"Fallido"],["Llegada",r.checkin||"Todavía no"]]
+    .forEach(([k,v])=>{const dt=document.createElement("dt"),dd=document.createElement("dd");dt.textContent=k;dd.textContent=v||"—";dl.append(dt,dd)});c.appendChild(dl);
+  const a=document.createElement("div");a.className="actions";
+  if(r.estado==="COMPLETED"&&r.codigo){
+    const go=document.createElement("button");go.className="btn";
+    if(!r.checkin){go.textContent="Marcar llegada";go.onclick=async()=>{go.disabled=true;await verify(r.codigo,true);closeSheet();refresh()}}
+    else{go.textContent="Deshacer llegada";go.className="btn ghost";go.onclick=async()=>{go.disabled=true;try{await api({action:"undo",code:r.codigo})}catch(e){}closeSheet();refresh()}}
+    a.appendChild(go)}
+  const x=document.createElement("button");x.className="btn ghost";x.textContent="Cerrar";x.onclick=closeSheet;a.appendChild(x);c.appendChild(a);$("sheet").hidden=false}
+function closeSheet(){$("sheet").hidden=true}
+$("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
+
+/* ---------- scanner ---------- */
+function result(cls,big,name,sub){const r=$("result");r.className="result "+cls;r.innerHTML="";
+  [["big",big],["name",name],["sub",sub]].forEach(([c,t])=>{if(t){const d=document.createElement("div");d.className=c;d.textContent=t;r.appendChild(d)}});
+  if(navigator.vibrate)navigator.vibrate(cls==="valid"?120:[90,60,90])}
+async function verify(code,silent){code=String(code||"").trim().toUpperCase();if(!code||busy)return;
+  if(!silent&&code===last&&Date.now()-lastAt<4000)return;last=code;lastAt=Date.now();busy=true;if(!silent)result("","Verificando…",code,"");
+  try{const r=await api({action:"checkin",code});const where=[r.iglesia,r.ciudad].filter(Boolean).join(" · ");
+    if(r.status==="pin"){busy=false;return logout()}
+    if(!silent){if(r.status==="valid")result("valid","✓ Bienvenido",r.nombre,where);
+      else if(r.status==="used")result("used","Ya entró",r.nombre,"Registrado a las "+r.at);
+      else if(r.status==="unpaid")result("bad","Pago no completado",r.nombre,"Enviar a la mesa de registro");
+      else result("bad","✗ Código no válido",code,"No está en la lista de inscritos")}}
+  catch(e){if(!silent)result("bad","Sin conexión","","Revisa el internet e intenta de nuevo")}
+  busy=false}
+function startScan(){if(scanner||!window.Html5Qrcode){if(!window.Html5Qrcode)result("bad","No se pudo cargar el escáner","","Usa el código manual");return}
+  scanner=new Html5Qrcode("reader");
+  scanner.start({facingMode:"environment"},{fps:10,qrbox:(w,h)=>{const s=Math.floor(Math.min(w,h)*.7);return{width:s,height:s}}},t=>verify(t),()=>{})
+    .catch(()=>{scanner=null;result("bad","Sin acceso a la cámara","","Permite la cámara en los ajustes o escribe el código")})}
+function stopScan(){if(scanner){const s=scanner;scanner=null;s.stop().then(()=>s.clear()).catch(()=>{})}}
+$("check").onclick=()=>{verify($("manual").value);$("manual").value=""};
+$("manual").addEventListener("keydown",e=>{if(e.key==="Enter")$("check").click()});
+
+/* long-press the brand to log out */
+let lp;document.querySelector(".brand").addEventListener("pointerdown",()=>{lp=setTimeout(()=>{if(PIN&&confirm)logout()},1200)});
+["pointerup","pointerleave"].forEach(ev=>document.querySelector(".brand").addEventListener(ev,()=>clearTimeout(lp)));
+
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+if(PIN)login();
+</script>
+</body>
+</html>
