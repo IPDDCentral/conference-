@@ -85,6 +85,25 @@ h1 span{animation:glow 3s ease-in-out infinite}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
 .seats small{font-size:12px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;text-align:center}
 .btn.full{opacity:.5;pointer-events:none}
+html{scroll-behavior:smooth}
+.reg{width:100%;max-width:420px;margin-top:48px;text-align:left;background:rgba(255,255,255,.035);border:1px solid #33171b;border-radius:20px;padding:24px 20px;scroll-margin-top:16px}
+.reg h2{margin:0;font-size:24px;font-weight:800;text-align:center}
+.reg .price{margin:6px 0 20px;text-align:center;color:var(--muted);font-size:15px}
+.reg .price b{color:var(--gold);font-size:20px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.field input{font:16px var(--sans);color:var(--fg);background:var(--box);border:1px solid #5a2027;border-radius:12px;padding:13px 14px;outline:none}
+.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,50,60,.25)}
+.paybox{margin-top:8px;display:flex;flex-direction:column;gap:10px}
+.paybox .lbl2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:600}
+#card-container{background:#fff;border-radius:12px;padding:4px 6px;min-height:56px}
+#apple-pay-button{height:48px;border-radius:12px;-apple-pay-button-style:white;-webkit-appearance:-apple-pay-button;cursor:pointer}
+.paysubmit{width:100%;margin-top:6px;border:0;cursor:pointer}
+.paysubmit[disabled]{opacity:.55;cursor:wait}
+.regmsg{margin:12px 0 0;font-size:15px;line-height:1.45;text-align:center;color:var(--muted)}
+.regmsg.err{color:#ff8a8a}.regmsg.ok{color:#9be29b}
+.done{text-align:center}.done h3{margin:0 0 8px;font-size:22px}.done p{margin:0;color:var(--muted);line-height:1.5}
+.alt{margin-top:14px;text-align:center;font-size:14px;color:var(--muted)}.alt a{color:var(--gold)}
 </style>
 
 <canvas id="embers" aria-hidden="true"></canvas>
@@ -110,13 +129,33 @@ h1 span{animation:glow 3s ease-in-out infinite}
     <div class="unit"><div class="num" id="m">00</div><small>MIN</small></div>
     <div class="unit"><div class="num" id="s">00</div><small>SEG</small></div>
   </div>
-  <a class="btn primary" href="https://docs.google.com/forms/d/e/1FAIpQLSc-5CTjDsrCxWyd8JvTrOXSu6UjFuQ7fItN_q26Ok7R7mG76g/viewform" target="_blank" rel="noopener">Inscríbete ahora</a>
+  <a class="btn primary" href="#registro">Inscríbete ahora</a>
   <div class="seats" id="seats">
     <div class="seats-top"><span>Cupos disponibles</span><span><b id="left">250</b> / 250</span></div>
     <div class="bar"><i id="fill"></i></div>
     <small id="seatmsg">Cupo limitado a 250 personas</small>
   </div>
 
+  <section class="reg" id="registro">
+    <h2>Inscripción</h2>
+    <p class="price">Ofrenda <b>$30</b> · Almuerzo incluido</p>
+    <form id="regform" novalidate>
+      <div class="field"><label for="f-name">Nombre y apellido</label><input id="f-name" name="nombre" autocomplete="name" required></div>
+      <div class="field"><label for="f-email">Correo electrónico</label><input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>
+      <div class="field"><label for="f-church">¿A qué iglesia pertenece?</label><input id="f-church" name="iglesia" required></div>
+      <div class="field"><label for="f-city">Ciudad de donde viene</label><input id="f-city" name="ciudad" autocomplete="address-level2" required></div>
+      <div class="paybox" id="paybox">
+        <span class="lbl2">Pago</span>
+        <div id="apple-pay-button" hidden></div>
+        <div id="google-pay-button"></div>
+        <div id="cash-app-pay"></div>
+        <div id="card-container"></div>
+      </div>
+      <button class="btn primary paysubmit" id="paybtn" type="submit">Pagar $30 e inscribirme</button>
+      <p class="regmsg" id="regmsg" role="status"></p>
+    </form>
+    <p class="alt" id="altlink" hidden>¿Problemas con el pago? <a href="https://docs.google.com/forms/d/e/1FAIpQLSc-5CTjDsrCxWyd8JvTrOXSu6UjFuQ7fItN_q26Ok7R7mG76g/viewform" target="_blank" rel="noopener">Usa el formulario anterior</a></p>
+  </section>
   <section class="info">
     <div class="blk">
       <h2>Lugar</h2>
@@ -141,17 +180,45 @@ h1 span{animation:glow 3s ease-in-out infinite}
   <footer>© 2026 Iglesia Presencia de Dios · Transformados por su presencia</footer>
 </main>
 
+<script src="https://web.squarecdn.com/v1/square.js"></script>
 <script>
-// Registration counter: paste the published CSV link of the form's response sheet here
-const RESPONSES_CSV="";const CAP=250;
-(async function(){if(!RESPONSES_CSV)return;try{
-const t=await (await fetch(RESPONSES_CSV+(RESPONSES_CSV.includes("?")?"&":"?")+"t="+Date.now())).text();
-const used=Math.max(0,t.trim().split(/\r?\n/).filter(l=>l.replace(/[",\s]/g,"")).length-1);
-const left=Math.max(0,CAP-used);document.getElementById("left").textContent=left;
-document.getElementById("fill").style.width=Math.min(100,used/CAP*100)+"%";
-const m=document.getElementById("seatmsg");
-if(left===0){m.textContent="Cupos agotados";const b=document.querySelector(".primary");b.textContent="Cupos agotados";b.classList.add("full")}
-else if(left<=25)m.textContent="¡Solo quedan "+left+" cupos!";else m.textContent=used+" personas ya inscritas"}catch(e){}})();
+/* ===== Registration + payment settings ===== */
+const SQUARE_APP_ID="";        // Square Application ID (sq0idp-...)
+const SQUARE_LOCATION_ID="";   // Square Location ID
+const SCRIPT_URL="";           // Google Apps Script web app URL (https://script.google.com/macros/s/.../exec)
+const CAP=250, PRICE="30.00";
+/* ========================================== */
+const $=id=>document.getElementById(id);
+function setSeats(used){const left=Math.max(0,CAP-used);$("left").textContent=left;$("fill").style.width=Math.min(100,used/CAP*100)+"%";
+ const m=$("seatmsg");if(left===0){m.textContent="Cupos agotados";document.querySelectorAll(".primary").forEach(b=>{b.textContent="Cupos agotados";b.classList.add("full")});$("regform").hidden=true}
+ else if(left<=25)m.textContent="¡Solo quedan "+left+" cupos!";else m.textContent=used+" personas ya inscritas"}
+async function loadSeats(){if(!SCRIPT_URL)return;try{const r=await (await fetch(SCRIPT_URL+"?action=count&t="+Date.now())).json();if(typeof r.count==="number")setSeats(r.count)}catch(e){}}
+loadSeats();
+function msg(t,c){const m=$("regmsg");m.textContent=t;m.className="regmsg"+(c?" "+c:"")}
+function formData(){const f=$("regform");const d={nombre:f.nombre.value.trim(),email:f.email.value.trim(),iglesia:f.iglesia.value.trim(),ciudad:f.ciudad.value.trim()};
+ if(!d.nombre||!d.iglesia||!d.ciudad){msg("Por favor completa todos los campos.","err");return null}
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){msg("Revisa tu correo electrónico.","err");return null}return d}
+async function sendPayment(token,d){
+ msg("Procesando tu pago…");$("paybtn").disabled=true;
+ try{const r=await (await fetch(SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...d,token})})).json();
+  if(r.ok){$("regform").innerHTML='<div class="done"><h3>¡Inscripción confirmada!</h3><p>Gracias, '+d.nombre.replace(/[<>&"]/g,"")+'. Recibimos tu ofrenda de $30. Te enviamos el recibo a '+d.email.replace(/[<>&"]/g,"")+'.<br>Nos vemos el sábado 14 de noviembre.</p></div>';if(typeof r.count==="number")setSeats(r.count)}
+  else{msg(r.error||"No se pudo completar el pago. Intenta de nuevo.","err");$("paybtn").disabled=false}}
+ catch(e){msg("No pudimos conectar. Revisa tu internet e intenta de nuevo.","err");$("paybtn").disabled=false}}
+(async function initPay(){
+ if(!SQUARE_APP_ID||!SQUARE_LOCATION_ID||!SCRIPT_URL||!window.Square){$("paybox").hidden=true;$("paybtn").textContent="Inscripción en línea muy pronto";$("paybtn").disabled=true;$("altlink").hidden=false;$("altlink").innerHTML='Mientras tanto, inscríbete <a href="https://docs.google.com/forms/d/e/1FAIpQLSc-5CTjDsrCxWyd8JvTrOXSu6UjFuQ7fItN_q26Ok7R7mG76g/viewform" target="_blank" rel="noopener">aquí</a>.';return}
+ const payments=Square.payments(SQUARE_APP_ID,SQUARE_LOCATION_ID);
+ const req=()=>payments.paymentRequest({countryCode:"US",currencyCode:"USD",total:{amount:PRICE,label:"Inscripción The Revival Is Here"}});
+ const card=await payments.card();await card.attach("#card-container");
+ $("regform").addEventListener("submit",async e=>{e.preventDefault();const d=formData();if(!d)return;
+  const res=await card.tokenize();if(res.status==="OK")sendPayment(res.token,d);else msg("Revisa los datos de tu tarjeta.","err")});
+ const wallet=(btn,fn)=>btn.addEventListener("click",async e=>{e.preventDefault();const d=formData();if(!d)return;try{const res=await fn.tokenize();if(res.status==="OK")sendPayment(res.token,d)}catch(err){}});
+ try{const g=await payments.googlePay(req());await g.attach("#google-pay-button",{buttonColor:"white",buttonSizeMode:"fill"});wallet($("google-pay-button"),g)}catch(e){}
+ try{const a=await payments.applePay(req());$("apple-pay-button").hidden=false;wallet($("apple-pay-button"),a)}catch(e){}
+ try{const c=await payments.cashAppPay(req(),{redirectURL:location.href.split("#")[0],referenceId:"revival"});
+  c.addEventListener("ontokenization",ev=>{const t=ev.detail.tokenResult;const d=formData();if(t.status==="OK"&&d)sendPayment(t.token,d)});
+  await c.attach("#cash-app-pay",{shape:"semiround",width:"full"})}catch(e){}
+})();
+
 
 const setT=(el,v)=>{if(el.textContent!==v){el.textContent=v;el.classList.remove("t");void el.offsetWidth;el.classList.add("t")}};
 (function(){const c=document.getElementById("embers");if(!c||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
