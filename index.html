@@ -78,6 +78,13 @@ h1 span{animation:glow 3s ease-in-out infinite}
 #embers{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .card{z-index:1}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}#embers{display:none}}
+.seats{width:100%;max-width:340px;margin-top:22px;display:flex;flex-direction:column;gap:8px}
+.seats-top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--muted)}
+.seats-top b{font-size:22px;color:var(--fg);font-variant-numeric:tabular-nums}
+.bar{height:10px;border-radius:10px;background:var(--box);border:1px solid #5a2027;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold2),var(--gold));transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+.seats small{font-size:12px;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;text-align:center}
+.btn.full{opacity:.5;pointer-events:none}
 </style>
 
 <canvas id="embers" aria-hidden="true"></canvas>
@@ -104,6 +111,11 @@ h1 span{animation:glow 3s ease-in-out infinite}
     <div class="unit"><div class="num" id="s">00</div><small>SEG</small></div>
   </div>
   <a class="btn primary" href="https://docs.google.com/forms/d/e/1FAIpQLSc-5CTjDsrCxWyd8JvTrOXSu6UjFuQ7fItN_q26Ok7R7mG76g/viewform" target="_blank" rel="noopener">Inscríbete ahora</a>
+  <div class="seats" id="seats">
+    <div class="seats-top"><span>Cupos disponibles</span><span><b id="left">250</b> / 250</span></div>
+    <div class="bar"><i id="fill"></i></div>
+    <small id="seatmsg">Cupo limitado a 250 personas</small>
+  </div>
 
   <section class="info">
     <div class="blk">
@@ -130,6 +142,17 @@ h1 span{animation:glow 3s ease-in-out infinite}
 </main>
 
 <script>
+// Registration counter: paste the published CSV link of the form's response sheet here
+const RESPONSES_CSV="";const CAP=250;
+(async function(){if(!RESPONSES_CSV)return;try{
+const t=await (await fetch(RESPONSES_CSV+(RESPONSES_CSV.includes("?")?"&":"?")+"t="+Date.now())).text();
+const used=Math.max(0,t.trim().split(/\r?\n/).filter(l=>l.replace(/[",\s]/g,"")).length-1);
+const left=Math.max(0,CAP-used);document.getElementById("left").textContent=left;
+document.getElementById("fill").style.width=Math.min(100,used/CAP*100)+"%";
+const m=document.getElementById("seatmsg");
+if(left===0){m.textContent="Cupos agotados";const b=document.querySelector(".primary");b.textContent="Cupos agotados";b.classList.add("full")}
+else if(left<=25)m.textContent="¡Solo quedan "+left+" cupos!";else m.textContent=used+" personas ya inscritas"}catch(e){}})();
+
 const setT=(el,v)=>{if(el.textContent!==v){el.textContent=v;el.classList.remove("t");void el.offsetWidth;el.classList.add("t")}};
 (function(){const c=document.getElementById("embers");if(!c||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
 const x=c.getContext("2d");let w,h,ps=[];const R=()=>{w=c.width=innerWidth*devicePixelRatio;h=c.height=innerHeight*devicePixelRatio};R();addEventListener("resize",R);
