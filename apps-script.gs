@@ -6,6 +6,7 @@
  *   SQUARE_LOCATION_ID   = your Square location ID
  *   CHECKIN_PIN          = a PIN your door team types once on the scanner page
  *   NTFY_TOPIC           = (optional) private ntfy.sh topic for phone push alerts
+ *   NOTIFY_EMAIL         = (optional) set to 'on' to also get an email per registration
  */
 const CAP = 250;
 const PRICE_CENTS = 3000; // $30.00
@@ -167,9 +168,12 @@ function sendTicket_(nombre, email, code) {
 function notifyOwner_(nombre, iglesia, ciudad, count) {
   const title = 'Nueva inscripción (' + count + '/' + CAP + ')';
   const text = nombre + ' · ' + iglesia + ' · ' + ciudad + '\nQuedan ' + (CAP - count) + ' cupos.';
-  const owner = Session.getEffectiveUser().getEmail();
-  if (owner) MailApp.sendEmail({ to: owner, subject: '✅ ' + title + ' – ' + nombre, body: text, name: 'Revival Inscripciones' });
-  const topic = PropertiesService.getScriptProperties().getProperty('NTFY_TOPIC');
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('NOTIFY_EMAIL') === 'on') {
+    const owner = Session.getEffectiveUser().getEmail();
+    if (owner) MailApp.sendEmail({ to: owner, subject: '✅ ' + title + ' – ' + nombre, body: text, name: 'Revival Inscripciones' });
+  }
+  const topic = props.getProperty('NTFY_TOPIC');
   if (topic) UrlFetchApp.fetch('https://ntfy.sh/' + encodeURIComponent(topic), {
     method: 'post', payload: text, muteHttpExceptions: true,
     headers: { Title: title, Tags: 'tada', Priority: 'high' }
