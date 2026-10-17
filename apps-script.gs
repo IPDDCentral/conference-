@@ -40,6 +40,7 @@ function doGet(e) {
   if (p.action === 'checkin') return json_(checkin_(p));
   if (p.action === 'list') return json_(list_(p));
   if (p.action === 'undo') return json_(undo_(p));
+  if (p.action === 'resend') return json_(resend_(p));
   return json_({ count: paidCount_(), cap: CAP });
 }
 
@@ -81,6 +82,26 @@ function undo_(p) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/** Staff app: fix a registrant's email and resend their ticket. */
+function resend_(p) {
+  if (!pinOk_(p)) return { ok: false, status: 'pin' };
+  const code = String(p.code || '').trim().toUpperCase();
+  const email = String(p.email || '').trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return { ok: false, error: 'Correo no válido' };
+  const sh = sheet_();
+  const n = sh.getLastRow() - 1;
+  if (n <= 0) return { ok: false, error: 'No encontrado' };
+  const rows = sh.getRange(2, 1, n, 9).getValues();
+  for (let i = 0; i < rows.length; i++) {
+    if (String(rows[i][8]).toUpperCase() !== code) continue;
+    if (rows[i][6] !== 'COMPLETED') return { ok: false, error: 'Pago no completado' };
+    sh.getRange(i + 2, 3).setValue(email);
+    sendTicket_(rows[i][1], email, code);
+    return { ok: true };
+  }
+  return { ok: false, error: 'No encontrado' };
 }
 
 /** Door check-in: verifies a ticket code and marks it used. */

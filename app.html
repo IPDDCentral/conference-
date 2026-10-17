@@ -211,7 +211,19 @@ function openPerson(r){const c=$("sheetcard");c.innerHTML="";
     const go=document.createElement("button");go.className="btn";
     if(!r.checkin){go.textContent="Marcar llegada";go.onclick=async()=>{go.disabled=true;await verify(r.codigo,true);closeSheet();refresh()}}
     else{go.textContent="Deshacer llegada";go.className="btn ghost";go.onclick=async()=>{go.disabled=true;try{await api({action:"undo",code:r.codigo})}catch(e){}closeSheet();refresh()}}
-    a.appendChild(go)}
+    a.appendChild(go);
+    const rs=document.createElement("button");rs.className="btn ghost";rs.textContent="Cambiar correo y reenviar entrada";
+    rs.onclick=()=>{const box=document.createElement("div");box.className="row";
+      const inp=document.createElement("input");inp.type="email";inp.inputMode="email";inp.value=r.email||"";inp.placeholder="Correo nuevo";
+      const send=document.createElement("button");send.className="btn";send.textContent="Enviar";
+      const note=document.createElement("p");note.className="meta";note.style.textAlign="left";
+      send.onclick=async()=>{send.disabled=true;note.textContent="Enviando…";
+        try{const res=await api({action:"resend",code:r.codigo,email:inp.value.trim()});
+          if(res.ok){note.textContent="✓ Entrada enviada a "+inp.value.trim();r.email=inp.value.trim();refresh()}
+          else{note.textContent=res.error||"No se pudo enviar";send.disabled=false}}
+        catch(e){note.textContent="Sin conexión";send.disabled=false}};
+      box.append(inp,send);rs.replaceWith(box);box.after(note);inp.focus()};
+    a.appendChild(rs)}
   const x=document.createElement("button");x.className="btn ghost";x.textContent="Cerrar";x.onclick=closeSheet;a.appendChild(x);c.appendChild(a);$("sheet").hidden=false}
 function closeSheet(){$("sheet").hidden=true}
 $("sheet").addEventListener("click",e=>{if(e.target.id==="sheet")closeSheet()});
