@@ -130,7 +130,7 @@ function sendTicket_(nombre, email, code) {
     '<p>Muestra este código en la entrada:</p>' +
     '<img src="cid:qr" width="260" height="260" alt="Código QR de entrada">' +
     '<p style="font-size:20px;letter-spacing:2px"><b>' + code + '</b></p>' +
-    '<p><b>Sábado 14 de noviembre</b><br>13505 Dulles Technology Dr., Suite #2A, Herndon, VA 20171</p>' +
+    '<p><b>Sábado 14 de noviembre · 9:00 AM – 5:00 PM</b><br>13505 Dulles Technology Dr., Suite #2A, Herndon, VA 20171</p>' +
     '<p style="color:#666;font-size:13px">Predicador invitado: Josué Bernier · Almuerzo incluido</p></div>';
   MailApp.sendEmail({
     to: email,

@@ -201,6 +201,7 @@ h1.title em{font-size:clamp(44px,13vw,80px)!important}
 body,body[class]{background:#2a0609!important}
 .stage+.vignette{background:radial-gradient(120% 90% at 50% 45%,transparent 50%,rgba(20,2,4,.75) 100%)!important}
 h1.title span{align-items:baseline!important}h1.title span .bl{line-height:1!important;display:inline-block;transform:translateY(.02em)}
+.hours{margin-top:6px;font-size:clamp(17px,4.8vw,22px);font-weight:300;font-stretch:110%;letter-spacing:.06em;color:#fbd6c6}
 </style>
 
 <div class="stage" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div>
@@ -221,6 +222,7 @@ h1.title span{align-items:baseline!important}h1.title span .bl{line-height:1!imp
   <div class="name">Josué Bernier</div>
   <div class="lbl day">Sábado</div>
   <div class="date">14 de Noviembre</div>
+  <div class="hours">9:00 AM – 5:00 PM</div>
   <div class="count">
     <div class="unit"><div class="num" id="d">00</div><small>DÍAS</small></div>
     <div class="unit"><div class="num" id="h">00</div><small>HORAS</small></div>
@@ -337,7 +339,7 @@ for(let i=0;i<40;i++){const p=mk();p.y=Math.random()*h;ps.push(p)}
 (function f(){x.clearRect(0,0,w,h);for(const p of ps){p.y-=p.v;p.d+=0.02;p.x+=Math.sin(p.d)*0.4;p.a-=0.0012;if(p.y<-10||p.a<=0)Object.assign(p,mk());
 x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fillStyle="rgba(255,"+(70+Math.floor(p.r*20))+",60,"+p.a+")";x.shadowBlur=8*devicePixelRatio;x.shadowColor="rgba(232,50,60,.9)";x.fill()}requestAnimationFrame(f)})()})();
 
-const target=new Date("2026-11-14T00:00:00-05:00").getTime();
+const target=new Date("2026-11-14T09:00:00-05:00").getTime();
 const p=n=>String(n).padStart(2,"0");
 function tick(){let t=Math.max(0,target-Date.now())/1000;
 setT(d,p(Math.floor(t/86400)));setT(h,p(Math.floor(t%86400/3600)));
